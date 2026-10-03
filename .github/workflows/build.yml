@@ -15,8 +15,12 @@ jobs:
 
       - name: Preparar Godot y Android
         run: |
-          mkdir -p $HOME/.local/share/godot/export_templates $HOME/.config/godot build/android
-          mv /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable $HOME/.local/share/godot/export_templates/ || true
+          mkdir -p $HOME/.config/godot build/android
+          TPL="$(find /root /usr /opt -type f -name android_debug.apk -path '*export_templates*' 2>/dev/null | head -n 1)"
+          echo "Plantillas encontradas en: $TPL"
+          mkdir -p $HOME/.local/share/godot/export_templates/4.3.stable
+          cp -r "$(dirname "$TPL")"/. $HOME/.local/share/godot/export_templates/4.3.stable/
+          ls $HOME/.local/share/godot/export_templates/4.3.stable
           keytool -keyalg RSA -genkeypair -alias androiddebugkey -keypass android -keystore $HOME/debug.keystore -storepass android -dname "CN=Android Debug,O=Android,C=US" -validity 9999 -deststoretype pkcs12
           SDK="${ANDROID_HOME:-/usr/lib/android-sdk}"
           JDK="$(dirname "$(dirname "$(readlink -f "$(which javac)")")")"
